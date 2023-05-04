@@ -1,0 +1,77 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.0.4'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'com.example'
+sourceCompatibility = '17'
+archivesBaseName = 'worker'
+
+
+configurations {
+    jaxb
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir 'build/generated-sources/jaxb'
+        }
+    }
+}
+
+tasks.register('genJaxb') {
+    ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+    ext.schema = "src/main/resources/WorkerSchemas.xsd"
+
+    outputs.dir sourcesDir
+
+    doLast() {
+        project.ant {
+            taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
+                    classpath: configurations.jaxb.asPath
+            mkdir(dir: sourcesDir)
+
+            xjc(destdir: sourcesDir, schema: schema) {
+                arg(value: "-wsdl")
+                produces(dir: sourcesDir, includes: "**/*.java")
+            }
+        }
+    }
+}
+
+compileJava.dependsOn genJaxb
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-web-services'
+    implementation 'wsdl4j:wsdl4j'
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    implementation group: 'com.github.dpaukov', name: 'combinatoricslib3', version: '3.3.3'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'org.springframework.amqp:spring-rabbit-test'
+
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+
+
+    jaxb("org.glassfish.jaxb:jaxb-xjc")
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

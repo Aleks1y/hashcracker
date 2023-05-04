@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+    <xs:element name="CrackHashManagerRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="RequestId" type="xs:string">
+                </xs:element>
+                <xs:element name="PartNumber" type="xs:int">
+                </xs:element>
+                <xs:element name="PartCount" type="xs:int">
+                </xs:element>
+                <xs:element name="Hash" type="xs:string">
+                </xs:element>
+                <xs:element name="MaxLength" type="xs:int">
+                </xs:element>
+                <xs:element name="Alphabet">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="symbols" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="CrackHashWorkerResponse">
+        <xs:complexType>
+            <xs:sequence>
+
+                <xs:element name="RequestId" type="xs:string"/>
+
+                <xs:element name="PartNumber" type="xs:int"/>
+
+                <xs:element name="Answers">
+                    <xs:complexType>
+                        <xs:sequence>
+
+                            <xs:element name="words" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
